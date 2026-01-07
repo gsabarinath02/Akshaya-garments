@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Admin users (separate from customers)
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+}
+
+// Site configuration (editable content)
+model SiteConfig {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String @db.Text
+  type  String @default("text") // text, html, json
+}
+
+// Customer users
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String   @unique
+  shopName  String
+  address   String   @db.Text
+  gstNumber String?
+  pincode   String
+  password  String
+  createdAt DateTime @default(now())
+  orders    Order[]
+  cartItems CartItem[]
+}
+
+// Product categories (Mens, Womens, Girls, Boys, Babies)
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String
+  slug          String        @unique
+  image         String?
+  sortOrder     Int           @default(0)
+  subCategories SubCategory[]
+}
+
+// Subcategories (Pant, T-shirt, etc.)
+model SubCategory {
+  id         Int       @id @default(autoincrement())
+  name       String
+  slug       String    @unique
+  image      String?
+  sortOrder  Int       @default(0)
+  categoryId Int
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products   Product[]
+}
+
+// Products
+model Product {
+  id             Int             @id @default(autoincrement())
+  name           String
+  slug           String          @unique
+  description    String?         @db.Text
+  hasColorChoice Boolean         @default(false)
+  sortOrder      Int             @default(0)
+  subCategoryId  Int
+  subCategory    SubCategory     @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+  designs        ProductDesign[]
+  colors         ProductColor[]
+  createdAt      DateTime        @default(now())
+}
+
+// Product designs (photos)
+model ProductDesign {
+  id        Int        @id @default(autoincrement())
+  name      String
+  image     String
+  sortOrder Int        @default(0)
+  productId Int
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems CartItem[]
+  orderItems OrderItem[]
+}
+
+// Product colors
+model ProductColor {
+  id        Int        @id @default(autoincrement())
+  colorName String
+  colorHex  String
+  productId Int
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems CartItem[]
+  orderItems OrderItem[]
+}
+
+// Cart items (temporary, before order)
+model CartItem {
+  id        Int           @id @default(autoincrement())
+  quantity  Int           @default(1)
+  userId    Int
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  designId  Int
+  design    ProductDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  colorId   Int?
+  color     ProductColor? @relation(fields: [colorId], references: [id], onDelete: SetNull)
+  createdAt DateTime      @default(now())
+}
+
+// Orders (saved carts)
+model Order {
+  id        Int         @id @default(autoincrement())
+  status    String      @default("pending") // pending, contacted, confirmed, completed, cancelled
+  notes     String?     @db.Text
+  userId    Int
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+// Order items
+model OrderItem {
+  id       Int           @id @default(autoincrement())
+  quantity Int
+  orderId  Int
+  order    Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  designId Int
+  design   ProductDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  colorId  Int?
+  color    ProductColor? @relation(fields: [colorId], references: [id], onDelete: SetNull)
+}

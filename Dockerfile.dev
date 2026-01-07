@@ -1,0 +1,11 @@
+# Development Dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# We are using local node_modules mounted via docker-compose
+# So we skip npm install here
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "npx prisma generate && npm run dev"]
