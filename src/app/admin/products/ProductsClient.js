@@ -203,19 +203,24 @@ function ProductCard({ product, cloudinaryCloudName, onEdit, onDelete, onAddDesi
             <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: 'var(--spacing-md)', marginTop: 'var(--spacing-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-sm)' }}>
                     <h4 style={{ fontSize: '0.875rem' }}>Designs</h4>
-                    <CldUploadWidget
-                        uploadPreset="ml_default"
-                        options={{ folder: 'clothing-brand/designs' }}
-                        onSuccess={(result) => {
-                            onAddDesign(product.id, result.info.secure_url, `Design ${(product.designs?.length || 0) + 1}`);
-                        }}
-                    >
-                        {({ open }) => (
-                            <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => open()}>
-                                + Upload Design
-                            </button>
-                        )}
-                    </CldUploadWidget>
+                    {cloudinaryCloudName ? (
+                        <CldUploadWidget
+                            uploadPreset="ml_default"
+                            options={{ folder: 'clothing-brand/designs' }}
+                            config={{ cloud: { cloudName: cloudinaryCloudName } }}
+                            onSuccess={(result) => {
+                                onAddDesign(product.id, result.info.secure_url, `Design ${(product.designs?.length || 0) + 1}`);
+                            }}
+                        >
+                            {({ open }) => (
+                                <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => open()}>
+                                    + Upload Design
+                                </button>
+                            )}
+                        </CldUploadWidget>
+                    ) : (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Configure Cloudinary</span>
+                    )}
                 </div>
 
                 {product.designs?.length > 0 ? (
