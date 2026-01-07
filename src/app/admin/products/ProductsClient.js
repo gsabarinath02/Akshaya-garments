@@ -1,10 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { CldUploadWidget } from 'next-cloudinary';
+import dynamic from 'next/dynamic';
 
-export default function ProductsClient({ initialProducts, categories }) {
-    const [products, setProducts] = useState(initialProducts);
+// Dynamically import CldUploadWidget to prevent SSR issues
+const CldUploadWidget = dynamic(
+    () => import('next-cloudinary').then(mod => mod.CldUploadWidget),
+    { ssr: false, loading: () => <button className="btn btn-secondary" disabled>Loading...</button> }
+);
+
+export default function ProductsClient({ initialProducts = [], categories = [] }) {
+    const [products, setProducts] = useState(initialProducts || []);
     const [showForm, setShowForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [formData, setFormData] = useState({
