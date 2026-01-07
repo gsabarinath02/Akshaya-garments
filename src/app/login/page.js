@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
 import { FaShoppingCart, FaBox, FaPhoneAlt, FaLock, FaArrowRight } from 'react-icons/fa';
 
-export default function LoginPage() {
+const LoginForm = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user, loading: authLoading, login } = useAuth();
@@ -199,5 +199,17 @@ export default function LoginPage() {
                 </motion.div>
             </div>
         </div>
+    );
+};
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
+                <div className="w-16 h-16 border-4 border-[var(--color-accent-primary)] border-t-transparent rounded-full animate-spin" />
+            </div>
+        }>
+            <LoginForm />
+        </Suspense>
     );
 }

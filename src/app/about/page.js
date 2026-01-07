@@ -3,6 +3,8 @@ import Footer from '@/components/Footer';
 import { prisma } from '@/lib/prisma';
 import { FaLayerGroup, FaCut, FaHandHoldingUsd, FaGlobeAsia, FaYoutube, FaMapMarkerAlt, FaWhatsapp, FaPhoneAlt, FaCheckCircle, FaUsers, FaHistory } from 'react-icons/fa';
 
+export const dynamic = 'force-dynamic';
+
 async function getPageContent() {
     const defaults = {
         brand_story: 'Akshaya Garments represents the pinnacle of textile craftsmanship. Established with a vision to bring premium quality clothing to every household, we have evolved from a humble beginning in Tirupur to a trusted name across the nation.\n\nOur journey is defined by an unyielding commitment to quality. We believe that true style lies in comfort and durability. Every garment we produce allows our customers to experience the perfect blend of traditional values and modern aesthetics.',

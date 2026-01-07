@@ -3,6 +3,8 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 async function getHowToOrderContent() {
     try {
         const config = await prisma.siteConfig.findUnique({
