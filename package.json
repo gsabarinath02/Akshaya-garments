@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "db:seed": "node prisma/seed.js",
     "create-admin": "node scripts/create-admin.js",
-    "seed-categories": "node scripts/seed-categories.js"
+    "seed-categories": "node scripts/seed-categories.js",
+    "seed-products": "node scripts/seed-products.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.1",
