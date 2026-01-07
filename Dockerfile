@@ -34,6 +34,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Install exact Prisma CLI version to match project
+RUN npm install -g prisma@6.19.1
 
 # Copy necessary files
 COPY --from=builder /app/public ./public
@@ -43,7 +45,6 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 USER nextjs
 
@@ -52,4 +53,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node scripts/seed-categories.js && node server.js"]
+CMD ["sh", "-c", "prisma db push --skip-generate && node scripts/seed-categories.js && node server.js"]
