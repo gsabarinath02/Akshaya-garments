@@ -46,7 +46,11 @@ export default async function AdminProductsPage() {
                     <h1>Product <span className="text-gradient">Management</span></h1>
                     <p style={{ color: 'var(--color-text-muted)' }}>Manage products, designs, and colors</p>
                 </div>
-                <ProductsClient initialProducts={products} categories={categories} />
+                <ProductsClient
+                    initialProducts={products}
+                    categories={categories}
+                    cloudinaryCloudName={process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+                />
             </main>
         </div>
     );

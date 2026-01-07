@@ -1,15 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import { CldUploadWidget } from 'next-cloudinary';
 
-// Dynamically import CldUploadWidget to prevent SSR issues
-const CldUploadWidget = dynamic(
-    () => import('next-cloudinary').then(mod => mod.CldUploadWidget),
-    { ssr: false, loading: () => <button className="btn btn-secondary" disabled>Loading...</button> }
-);
-
-export default function ProductsClient({ initialProducts = [], categories = [] }) {
+export default function ProductsClient({ initialProducts = [], categories = [], cloudinaryCloudName }) {
     const [products, setProducts] = useState(initialProducts || []);
     const [showForm, setShowForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
@@ -163,6 +157,7 @@ export default function ProductsClient({ initialProducts = [], categories = [] }
                     <ProductCard
                         key={product.id}
                         product={product}
+                        cloudinaryCloudName={cloudinaryCloudName}
                         onEdit={() => { setEditingProduct(product); setFormData({ name: product.name, subCategoryId: String(product.subCategoryId), description: product.description || '', hasColorChoice: product.hasColorChoice }); setShowForm(true); }}
                         onDelete={() => deleteProduct(product.id)}
                         onAddDesign={addDesign}
@@ -182,7 +177,7 @@ export default function ProductsClient({ initialProducts = [], categories = [] }
     );
 }
 
-function ProductCard({ product, onEdit, onDelete, onAddDesign, onDeleteDesign, onAddColor, onDeleteColor }) {
+function ProductCard({ product, cloudinaryCloudName, onEdit, onDelete, onAddDesign, onDeleteDesign, onAddColor, onDeleteColor }) {
     const [showDesigns, setShowDesigns] = useState(false);
     const [colorForm, setColorForm] = useState({ name: '', hex: '#000000' });
 
